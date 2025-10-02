@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Resources — Books · Video & Audio · Schem of work · Lesson Plan</title>
+<style>
+  body{font-family:Arial, sans-serif; margin:0; background:#f6f9fc;}
+  header{padding:15px; background:#2563eb; color:white;}
+  header h1{margin:0; font-size:20px;}
+  .container{display:flex; flex-wrap:wrap;}
+  nav{width:200px; background:#fff; padding:10px; border-right:1px solid #ddd;}
+  nav button{display:block; width:100%; padding:8px; margin:4px 0; border:none; background:#eee; cursor:pointer;}
+  nav button.active{background:#2563eb; color:white;}
+  main{flex:1; padding:20px;}
+  .levels, .classes{margin-bottom:10px;}
+  .levels button, .classes button{margin:2px; padding:6px 10px; border:none; border-radius:4px; background:#eee; cursor:pointer;}
+  .levels button.active, .classes button.active{background:#2563eb; color:white;}
+  .card{background:white; padding:12px; border-radius:8px; margin-bottom:15px; box-shadow:0 2px 4px rgba(0,0,0,0.1);}
+  .resource{margin:8px 0; padding:8px; border:1px solid #ddd; border-radius:6px;}
+  .resource a{color:#2563eb; text-decoration:none;}
+</style>
+</head>
+<body>
+  <header>
+    <h1>Resources Page</h1>
+    <p>Books · Video & Audio · Schem of work · Lesson Plan</p>
+  </header>
+
+  <div class="container">
+    <nav>
+      <button data-section="books" class="active">📚 Books</button>
+      <button data-section="media">🎬 Video & Audio</button>
+      <button data-section="schem">🗂️ Schem of work</button>
+      <button data-section="lesson">📝 Lesson Plan</button>
+    </nav>
+
+    <main>
+      <div class="levels">
+        <button data-level="pre-primary" class="active">Pre Primary</button>
+        <button data-level="lower-primary">Lower Primary</button>
+        <button data-level="upper-primary">Upper Primary</button>
+        <button data-level="secondary">Secondary</button>
+      </div>
+      <div class="classes" id="classButtons"></div>
+      <div id="contentArea"></div>
+    </main>
+  </div>
+
+<script>
+// --- Data model with classes ---
+const DATA = {
+  books:{
+    "pre-primary": {N1:[], N2:[], N3:[]},
+    "lower-primary": {P1:[], P2:[], P3:[]},
+    "upper-primary": {P4:[], P5:[], P6:[]},
+    "secondary": {S1:[], S2:[], S3:[]}
+  },
+  media:{
+    "pre-primary": {N1:[], N2:[], N3:[]},
+    "lower-primary": {P1:[], P2:[], P3:[]},
+    "upper-primary": {P4:[], P5:[], P6:[]},
+    "secondary": {S1:[], S2:[], S3:[]}
+  },
+  schem:{
+    "pre-primary": {N1:[], N2:[], N3:[]},
+    "lower-primary": {P1:[], P2:[], P3:[]},
+    "upper-primary": {P4:[], P5:[], P6:[]},
+    "secondary": {S1:[], S2:[], S3:[]}
+  },
+  lesson:{
+    "pre-primary": {N1:[], N2:[], N3:[]},
+    "lower-primary": {P1:[], P2:[], P3:[]},
+    "upper-primary": {P4:[], P5:[], P6:[]},
+    "secondary": {S1:[], S2:[], S3:[]}
+  }
+};
+
+// --- Insert your sample resource ---
+DATA.books["secondary"]["S3"].push({
+  title:"ICT",
+  type:"Book",
+  subject:"ICT",
+  category:"Student's Book",
+  url:"https://elearning.reb.rw/pluginfile.php/11698/mod_resource/content/1/ICT%20%20S3%20SB.pdf"
+});
+
+// --- State ---
+let currentSection="books";
+let currentLevel="pre-primary";
+let currentClass="N1";
+
+// --- Elements ---
+const navButtons=document.querySelectorAll("nav button");
+const levelButtons=document.querySelectorAll(".levels button");
+const classButtons=document.getElementById("classButtons");
+const contentArea=document.getElementById("contentArea");
+
+// --- Render classes for selected level ---
+function renderClasses(){
+  classButtons.innerHTML="";
+  const classes=Object.keys(DATA[currentSection][currentLevel]);
+  classes.forEach(c=>{
+    const btn=document.createElement("button");
+    btn.textContent=c;
+    btn.dataset.class=c;
+    if(c===currentClass) btn.classList.add("active");
+    btn.onclick=()=>{currentClass=c; renderClasses(); renderContent();};
+    classButtons.appendChild(btn);
+  });
+}
+
+// --- Render content ---
+function renderContent(){
+  const resources=DATA[currentSection][currentLevel][currentClass];
+  contentArea.innerHTML=`<div class="card"><h2>${currentSection.toUpperCase()} — ${currentLevel} (${currentClass})</h2></div>`;
+  if(resources.length===0){
+    contentArea.innerHTML+=`<p>No resources yet for this class.</p>`;
+  }else{
+    resources.forEach(r=>{
+      contentArea.innerHTML+=`
+        <div class="resource">
+          <strong>${r.title}</strong> (${r.category})<br/>
+          Subject: ${r.subject}<br/>
+          <a href="${r.url}" target="_blank">Open Resource</a>
+        </div>`;
+    });
+  }
+}
+
+// --- Navigation ---
+navButtons.forEach(btn=>{
+  btn.onclick=()=>{
+    navButtons.forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    currentSection=btn.dataset.section;
+    currentLevel="pre-primary";
+    currentClass=Object.keys(DATA[currentSection][currentLevel])[0];
+    renderClasses(); renderContent();
+  };
+});
+
+levelButtons.forEach(btn=>{
+  btn.onclick=()=>{
+    levelButtons.forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    currentLevel=btn.dataset.level;
+    currentClass=Object.keys(DATA[currentSection][currentLevel])[0];
+    renderClasses(); renderContent();
+  };
+});
+
+// --- Initialize ---
+renderClasses();
+renderContent();
+</script>
+</body>
+</html>
